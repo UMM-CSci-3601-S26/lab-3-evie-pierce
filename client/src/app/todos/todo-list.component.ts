@@ -14,7 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
 import { Todo } from './todo';
-//import { TodoCardComponent } from './todo-card.component';
+import { TodoCardComponent } from './todo-card.component';
 import { TodoService } from './todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
@@ -22,9 +22,9 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
  * A component that displays a list of todos, either as a grid
  * of cards or as a vertical list.
  *
- * The component supports local filtering by name and/or company,
+ * The component supports local filtering by category and/or owner,
  * and remote filtering (i.e., filtering by the server) by
- * role and/or age. These choices are fairly arbitrary here,
+ * status and/or body. These choices are fairly arbitrary here,
  * but in "real" projects you want to think about where it
  * makes the most sense to do the filtering.
  */
@@ -41,7 +41,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
     MatSelectModule,
     MatOptionModule,
     MatRadioModule,
-    //TodoCardComponent,
+    TodoCardComponent,
     MatListModule,
     RouterLink,
     MatButtonModule,
