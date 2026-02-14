@@ -69,34 +69,43 @@
     <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
     <div>
       @switch (viewType()) {
-      <!-- Card grid view
-      @case ('card') {
-      <div class="user-cards-container flex-row gap-8 flex-wrap">
-        @for (user of filteredTodos(); track user._id) {
-        <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-user-card>
+        <!-- Card grid view-->
+        @case ('card') {
+        <div class="todo-cards-container flex-row gap-8 flex-wrap">
+          @for (todo of filteredTodos(); track todo._id) {
+          <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
+          }
+        </div>
         }
-      </div>
-      } -->
-      <!-- List view
-      @case ('list') {
-      <mat-card>
-        <mat-card-content>
-          <mat-nav-list class="user-nav-list">
-            <h3 mat-subheader>Users</h3>
-            @for (user of filteredUsers(); track user._id) {
-            <a mat-list-item [routerLink]="['/users', user._id]" class="user-list-item">
-              @if (user.avatar) {
-              <img matListItemAvatar [src]="user.avatar" alt="Avatar for {{ user.name }}">
+        <!-- List view -->
+        @case ('list') {
+        <mat-card>
+          <mat-card-content>
+            <mat-nav-list class="todo-nav-list">
+              <h2 mat-subheader>TODOS</h2>
+              @for (todo of filteredTodos(); track todo._id) {
+              <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
+                <!--@if (todo.avatar) {
+                <img matListItemAvatar [src]="user.avatar" alt="Avatar for {{ user.name }}">
+                } -->
+
+                <!--
+                Why TF doesn't this work? Revisit at some point
+                @if (todo.status) {
+                  <span matListItemTitle mat-line class="todo-list-owner"> ☑ Finished - {{todo.owner}} </span>
+                } @else  {
+                  <span matListItemTitle mat-line class="todo-list-owner"> ☒ Unfinished - {{todo.owner}} </span>
+                }
+              -->
+                <span matListItemTitle class="todo-list-title"> {{todo.owner}} - {{todo.category}} </span>
+                <span matListItemLine class="todo-list-body"> {{todo.body}} </span>
+                <span matListItemLine class="todo-list-status"> Complete: {{todo.status}} </span>
+              </a>
               }
-              <span matListItemTitle mat-line class="user-list-name"> {{user.name}} </span>
-              <span matListItemLine class="user-list-role"> {{user.role}} </span>
-            </a>
-            }
-          </mat-nav-list>
-        </mat-card-content>
-      </mat-card>
-      }
-      -->
+            </mat-nav-list>
+          </mat-card-content>
+        </mat-card>
+        }
       }
     </div>
   </div>
