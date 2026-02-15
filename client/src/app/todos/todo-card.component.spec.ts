@@ -1,46 +1,50 @@
-// import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-// import { UserCardComponent } from './user-card.component';
-// import { User } from './user';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { TodoCardComponent } from './todo-card.component';
+import { Todo } from './todo';
 
-// describe('UserCardComponent', () => {
-//   let component: UserCardComponent;
-//   let fixture: ComponentFixture<UserCardComponent>;
-//   let expectedUser: User;
+describe('TodoCardComponent', () => {
+  let component: TodoCardComponent;
+  let fixture: ComponentFixture<TodoCardComponent>;
+  let expectedTodo: Todo;
 
-//   beforeEach(waitForAsync(() => {
-//     TestBed.configureTestingModule({
-//       imports: [
-//         UserCardComponent
-//       ]
-//     })
-//       .compileComponents();
-//   }));
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        TodoCardComponent
+      ]
+    })
+      .compileComponents();
+  }));
 
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(UserCardComponent);
-//     component = fixture.componentInstance;
-//     expectedUser = {
-//       _id: 'chris_id',
-//       name: 'Chris',
-//       age: 25,
-//       company: 'UMM',
-//       email: 'chris@this.that',
-//       role: 'admin',
-//       avatar: 'https://gravatar.com/avatar/8c9616d6cc5de638ea6920fb5d65fc6c?d=identicon'
-//     };
-//     fixture.componentRef.setInput('user', expectedUser);
-//     fixture.detectChanges();
-//   });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TodoCardComponent);
+    component = fixture.componentInstance;
+    expectedTodo = {
+      _id: 'example_id',
+      owner:'Bob',
+      category:'espionage',
+      status: false,
+      body:'This is a test! How exciting!'
+    };
+    fixture.componentRef.setInput('todo', expectedTodo);
+    fixture.detectChanges();
+  });
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-//   it('should be associated with the correct user', () => {
-//     expect(component.user()).toEqual(expectedUser);
-//   });
+  it('should be associated with the correct todo', () => {
+    expect(component.todo()).toEqual(expectedTodo);
+  });
 
-//   it('should be the user named Chris', () => {
-//     expect(component.user().name).toEqual('Chris');
-//   });
-// });
+  it('should be the todo owned by Bob', () => {
+    expect(component.todo().owner).toEqual('Bob');
+  });
+  it('should involve espionage', () => {
+    expect(component.todo().category).toEqual('espionage');
+  });
+  it('should contain the expected body', () => {
+    expect(component.todo().body).toEqual('This is a test! How exciting!');
+  });
+});
