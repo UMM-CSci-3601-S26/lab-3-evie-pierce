@@ -23,7 +23,7 @@ describe('TodoCardComponent', () => {
       _id: 'example_id',
       owner:'Bob',
       category:'espionage',
-      status: false,
+      status: 'complete',
       body:'This is a test! How exciting!'
     };
     fixture.componentRef.setInput('todo', expectedTodo);
@@ -46,5 +46,8 @@ describe('TodoCardComponent', () => {
   });
   it('should contain the expected body', () => {
     expect(component.todo().body).toEqual('This is a test! How exciting!');
+  });
+  it('should contain the expected status', () => {
+    expect(component.todo().status).toEqual('complete');
   });
 });

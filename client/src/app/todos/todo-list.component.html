@@ -27,29 +27,25 @@
         </div>
 
         <div class="flex-row gap-8 flex-wrap">
-          <!-- Examples of filtering on the server -->
-          <!--
+
           <mat-form-field class="input-field">
-            <mat-label>Age</mat-label>
-            <input matInput data-test="userAgeInput" type="number" placeholder="Filter by age" min="0" max="200"
-              [(ngModel)]="userAge">
+            <mat-label>Body</mat-label>
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body" [(ngModel)]="todoBody">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 
-          <mat-form-field class="input-field">
-            <mat-label>Role</mat-label>
-            <mat-select [(ngModel)]="userRole" data-test="userRoleSelect">
+
+        <mat-form-field class="input-field">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="todoStatus" data-test="todoStatusSelect">
               <mat-option>--</mat-option>
-              <mat-option value="admin">Admin</mat-option>
-              <mat-option value="editor">Editor</mat-option>
-              <mat-option value="viewer">Viewer</mat-option>
+              <mat-option value="complete">Complete</mat-option>
+              <mat-option value="incomplete">Incomplete</mat-option>
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
-          -->
         </div>
 
-        <br>
         <div class="flex-row gap-8 flex-wrap">
           <label for="viewType">View type: </label>
           <mat-radio-group aria-label="View type" [(ngModel)]="viewType" data-test="viewTypeRadio">
@@ -85,21 +81,9 @@
               <h2 mat-subheader>TODOS</h2>
               @for (todo of filteredTodos(); track todo._id) {
               <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
-                <!--@if (todo.avatar) {
-                <img matListItemAvatar [src]="user.avatar" alt="Avatar for {{ user.name }}">
-                } -->
-
-                <!--
-                Why TF doesn't this work? Revisit at some point
-                @if (todo.status) {
-                  <span matListItemTitle mat-line class="todo-list-owner"> ☑ Finished - {{todo.owner}} </span>
-                } @else  {
-                  <span matListItemTitle mat-line class="todo-list-owner"> ☒ Unfinished - {{todo.owner}} </span>
-                }
-              -->
                 <span matListItemTitle class="todo-list-title"> {{todo.owner}} - {{todo.category}} </span>
                 <span matListItemLine class="todo-list-body"> {{todo.body}} </span>
-                <span matListItemLine class="todo-list-status"> Complete: {{todo.status}} </span>
+                <span matListItemLine class="todo-list-status">{{todo.status}} </span>
               </a>
               }
             </mat-nav-list>

@@ -13,21 +13,21 @@ describe('TodoService', () => {
       _id: 'test_id_1',
       owner: 'Alfred',
       category: "homework",
-      status:false,
+      status: "incomplete",
       body: "Write a paper!"
     },
     {
       _id: 'test_id_2',
       owner: 'Bob',
       category: "homework",
-      status:true,
+      status: "complete",
       body: "Write another paper!"
     },
     {
       _id: 'test_id_3',
       owner: 'Clide',
       category: "homework",
-      status:false,
+      status: "incomplete",
       body: "Write all the papers!"
     }
   ];
@@ -106,7 +106,7 @@ describe('TodoService', () => {
 
   describe('When getTodos() is called with parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
 
-    it('correctly calls api/todos with filter parameter \'body\'', () => {
+    it('correctly calls api/todos with filter parameter \'contains\'', () => {
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
       todoService.getTodos({ body:'Write' }).subscribe(() => {
@@ -119,22 +119,22 @@ describe('TodoService', () => {
         //     key-value pair.
         expect(mockedMethod)
           .withContext('talks to the correct endpoint')
-          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('body', 'Write') });
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('contains', 'Write') });
       });
     });
 
     it('correctly calls api/todos with filter parameter \'status\'', () => {
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-      todoService.getTodos({ status: false }).subscribe(() => {
+      todoService.getTodos({ status: "incomplete" }).subscribe(() => {
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
         //For some reason this results in no parameters?
         //Does this have something to do with how we're converting booleans into 'complete' and 'incomplete'?
-        // expect(mockedMethod)
-        //   .withContext('talks to the correct endpoint')
-        //   .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'incomplete') });
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'incomplete') });
       });
     });
 
