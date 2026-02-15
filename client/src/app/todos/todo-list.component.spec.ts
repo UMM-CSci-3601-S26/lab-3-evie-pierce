@@ -48,9 +48,9 @@ describe('Todo list', () => {
   it('should call getTodos() when todoStatus signal changes', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     // todoList.userRole.set('admin');
-    todoList.todoStatus.set(true)
+    todoList.todoStatus.set("complete")
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ status: true, body: undefined });
+    expect(spy).toHaveBeenCalledWith({ status: "complete", body: undefined });
   });
 
   it('should call getTodos() when todoBody signal changes', () => {

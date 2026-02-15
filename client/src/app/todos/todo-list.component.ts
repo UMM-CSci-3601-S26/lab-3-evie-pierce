@@ -58,7 +58,7 @@ export class TodoListComponent {
   todoOwner = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
-  todoStatus = signal<boolean | undefined>(undefined);
+  todoStatus = signal<string | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
@@ -73,30 +73,18 @@ export class TodoListComponent {
   private todoStatus$ = toObservable(this.todoStatus);
   private todoBody$ = toObservable(this.todoBody);
 
-  // We ultimately `toSignal` this to be able to access it synchronously, but we do all the RXJS operations
-  // "inside" the `toSignal()` call processing and transforming the observables there.
+  // Server side filtering
   serverFilteredTodos =
-    // This `combineLatest` call takes the most recent values from these two observables (both built from
-    // signals as described above) and passes them into the following `.pipe()` call. If either of the
-    // `userRole` or `userAge` signals change (because their text fields get updated), then that will trigger
-    // the corresponding `userRole$` and/or `userAge$` observables to change, which will cause `combineLatest()`
-    // to send a new pair down the pipe.
     toSignal(
       combineLatest([this.todoStatus$, this.todoBody$]).pipe(
-        // `switchMap` maps from one observable to another. In this case, we're taking `role` and `age` and passing
-        // them as arguments to `userService.getUsers()`, which then returns a new observable that contains the
-        // results.
 
-        //filters going to the server:
         switchMap(([status, body]) =>
           this.todoService.getTodos({
             status,
             body,
           })
         ),
-        // `catchError` is used to handle errors that might occur in the pipeline. In this case `userService.getUsers()`
-        // can return errors if, for example, the server is down or returns an error. This catches those errors, and
-        // sets the `errMsg` signal, which allows error messages to be displayed.
+
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
             this.errMsg.set(
@@ -104,27 +92,16 @@ export class TodoListComponent {
             );
           }
           this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
-          // `catchError` needs to return the same type. `of` makes an observable of the same type, and makes the array still empty
+
           return of<Todo[]>([]);
         }),
         // Tap allows you to perform side effects if necessary
         tap(() => {
-          // A common side effect is printing to the console.
-          // You don't want to leave code like this in the
-          // production system, but it can be useful in debugging.
-          // console.log('Users were filtered on the server')
         })
       )
     );
 
-  // No need for fancy RXJS stuff. We do the fancy RXJS stuff where we call `toSignal`, i.e., up in
-  // the definition of `serverFilteredUsers` above.
-  // `computed()` takes the value of one or more signals (`serverFilteredUsers` in this case) and
-  // _computes_ the value of a new signal (`filteredUsers`). Angular recognizes when any signals
-  // in the function passed to `computed()` change, and will then call that function to generate
-  // the new value of the computed signal.
-  // In this case, whenever `serverFilteredUsers` changes (e.g., because we change `userName`), then `filteredUsers`
-  // will be updated by rerunning the function we're passing to `computed()`.
+  //Client side filtering
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {

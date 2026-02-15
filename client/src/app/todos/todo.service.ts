@@ -29,7 +29,7 @@ export class TodoService {
 
   private readonly ownerKey = 'owner';
   private readonly categoryKey = 'category';
-  private readonly bodyKey = 'body';
+  private readonly bodyKey = 'contains';
   private readonly statusKey = 'status';
 
   /**
@@ -49,21 +49,17 @@ export class TodoService {
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: {status?: boolean; body?: string; }): Observable<Todo[]> {
+  getTodos(filters?: {status?: string; body?: string; }): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
+      if (filters.status) {
+        httpParams = httpParams.set(this.statusKey, filters.status);
+      }
       if (filters.body) {
         httpParams = httpParams.set(this.bodyKey, filters.body);
-      }
-      if (filters.status) {
-        if (filters.status == true) {
-          httpParams = httpParams.set(this.statusKey, "complete");
-        } else {
-          httpParams = httpParams.set(this.statusKey, "incomplete");
-        }
       }
     }
     // Send the HTTP GET request with the given URL and parameters.
@@ -97,7 +93,7 @@ export class TodoService {
    * @param filters the map of key-value pairs used for the filtering
    * @returns an array of `Users` matching the given filters
    */
-  filterTodos(todos: Todo[], filters: { owner?: string; category?: string; status?: boolean; body?: string }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { owner?: string; category?: string; status?: string; body?: string;}): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
     //Filter by Owner
@@ -113,10 +109,6 @@ export class TodoService {
 
     return filteredTodos;
   }
-
-  // getCompanies(): Observable<Company[]> {
-  //   return this.httpClient.get<Company[]>(`${this.usersByCompanyUrl}`);
-  // }
 
   // addUser(newUser: Partial<User>): Observable<string> {
   //   // Send post request to add a new user with the user data as the body.
