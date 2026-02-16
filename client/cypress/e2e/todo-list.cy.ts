@@ -1,16 +1,37 @@
+
 // import { UserListPage } from '../support/user-list.po';
 
 // const page = new UserListPage();
 
-// describe('User list', () => {
+describe('Todo list', () => {
 
-//   before(() => {
-//     cy.task('seed:database');
-//   });
+  before(() => {
+    cy.task('seed:database');
+  });
 
-//   beforeEach(() => {
-//     page.navigateTo();
-//   });
+  beforeEach(() => {
+    cy.visit('/todos')
+  });
+
+  it('Should have the correct title', () => {
+    cy.get('[data-test="todo-list-title"]').should('have.text', 'Todos');
+  });
+
+  it('Should load todos', () => {
+    cy.get('[data-test="todo"]').should('have.length', 300);
+  });
+
+  it('Should be able to filter by status', () => {
+    cy.get('[data-test="todoStatusSelect"]').click(); // click on the dropdown
+    cy.get('[data-test="complete"]').click();         // click the option that has 'data-test="complete"'
+    cy.get('[data-test="todo"]').each(todo => {       // check that each todo displays the right status
+      // sounds like you wanted this to say "complete", but it actually says "Status: true" in card view
+      cy.wrap(todo).find('[data-test="todo-status"]').should('contain.text', 'true');
+    });
+    // This test relies on both the card and list views showing the same thing,
+    // which I don't think is actually happening. However, this gives you a start about how to check.
+  });
+});
 
 //   it('Should have the correct title', () => {
 //     page.getUserTitle().should('have.text', 'Users');

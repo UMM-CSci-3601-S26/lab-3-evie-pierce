@@ -6,7 +6,7 @@
             <p matListItemTitle>{{ todo().owner }} - {{ todo().category }}</p>
           </mat-list-item>
           <mat-divider [inset]=true></mat-divider>
-         <mat-list-item>
+         <mat-list-item data-test="todo-status">
             <p matListItemTitle>Status: {{ todo().status }}</p>
           </mat-list-item>
           <!--

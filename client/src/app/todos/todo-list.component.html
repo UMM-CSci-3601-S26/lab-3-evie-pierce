@@ -3,7 +3,7 @@
 
     <mat-card class="search-card">
       <mat-card-header>
-        <mat-card-title class="todo-list-title">Todos</mat-card-title>
+        <mat-card-title class="todo-list-title" data-test="todo-list-title">Todos</mat-card-title>
       </mat-card-header>
       <mat-card-content>
 
@@ -39,7 +39,7 @@
             <mat-label>Status</mat-label>
             <mat-select [(ngModel)]="todoStatus" data-test="todoStatusSelect">
               <mat-option>--</mat-option>
-              <mat-option value="complete">Complete</mat-option>
+              <mat-option value="complete" data-test="complete">Complete</mat-option>
               <mat-option value="incomplete">Incomplete</mat-option>
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
@@ -69,7 +69,7 @@
         @case ('card') {
         <div class="todo-cards-container flex-row gap-8 flex-wrap">
           @for (todo of filteredTodos(); track todo._id) {
-          <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
+          <app-todo-card [simple]="true" class="todo-card" [todo]="todo" data-test="todo"></app-todo-card>
           }
         </div>
         }
@@ -80,10 +80,10 @@
             <mat-nav-list class="todo-nav-list">
               <h2 mat-subheader>TODOS</h2>
               @for (todo of filteredTodos(); track todo._id) {
-              <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
+              <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item" data-test="todo">
                 <span matListItemTitle class="todo-list-title"> {{todo.owner}} - {{todo.category}} </span>
                 <span matListItemLine class="todo-list-body"> {{todo.body}} </span>
-                <span matListItemLine class="todo-list-status">{{todo.status}} </span>
+                <span matListItemLine class="todo-list-status" data-test="todo-status">{{todo.status}} </span>
               </a>
               }
             </mat-nav-list>
