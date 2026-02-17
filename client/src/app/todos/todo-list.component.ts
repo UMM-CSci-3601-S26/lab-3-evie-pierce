@@ -59,6 +59,8 @@ export class TodoListComponent {
   todoCategory = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
   todoStatus = signal<string | undefined>(undefined);
+  todoOrder = signal<string | undefined>(undefined);
+  todoLimit = signal<number | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
@@ -72,16 +74,20 @@ export class TodoListComponent {
   // definition of `serverFilteredUsers` below to trigger updates to the `Observable` there.
   private todoStatus$ = toObservable(this.todoStatus);
   private todoBody$ = toObservable(this.todoBody);
+  private todoLimit$ = toObservable(this.todoLimit);
+  private todoOrder$ = toObservable(this.todoOrder);
 
   // Server side filtering
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoStatus$, this.todoBody$]).pipe(
+      combineLatest([this.todoStatus$, this.todoBody$, this.todoLimit$, this.todoOrder$]).pipe(
 
-        switchMap(([status, body]) =>
+        switchMap(([status, body, limit, orderBy]) =>
           this.todoService.getTodos({
             status,
             body,
+            limit,
+            orderBy,
           })
         ),
 

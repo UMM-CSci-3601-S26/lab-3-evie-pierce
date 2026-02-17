@@ -50,7 +50,7 @@ describe('Todo list', () => {
     // todoList.userRole.set('admin');
     todoList.todoStatus.set("complete")
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ status: "complete", body: undefined });
+    expect(spy).toHaveBeenCalledWith({ status: "complete", limit: undefined, orderBy: undefined, body: undefined });
   });
 
   it('should call getTodos() when todoBody signal changes', () => {
@@ -58,22 +58,24 @@ describe('Todo list', () => {
     // todoList.userRole.set('admin');
     todoList.todoBody.set('testing... testing...')
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ body: 'testing... testing...', status: undefined });
+    expect(spy).toHaveBeenCalledWith({ body: 'testing... testing...', limit: undefined, orderBy: undefined, status: undefined });
   });
 
-  // it('should call getTodos() when todoRole signal changes', () => {
-  //   const spy = spyOn(todoService, 'getTodos').and.callThrough();
-  //   todoList.userRole.set('admin');
-  //   fixture.detectChanges();
-  //   expect(spy).toHaveBeenCalledWith({ role: 'admin', age: undefined });
-  // });
+  it('should call getTodos() when todoLimit signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    // todoList.userRole.set('admin');
+    todoList.todoLimit.set(99)
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ limit: 99, body: undefined, status: undefined, orderBy: undefined, });
+  });
 
-  // it('should call getTodos() when todoAge signal changes', () => {
-  //   const spy = spyOn(todoService, 'getTodos').and.callThrough();
-  //   todoList.todoAge.set(25);
-  //   fixture.detectChanges();
-  //   expect(spy).toHaveBeenCalledWith({ role: undefined, age: 25 });
-  // });
+  it('should call getTodos() when todoOrder signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    // todoList.userRole.set('admin');
+    todoList.todoOrder.set('category')
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ orderBy: 'category', status: undefined, limit: undefined, body: undefined});
+  });
 
   it('should not show error message on successful load', () => {
     expect(todoList.errMsg()).toBeUndefined();

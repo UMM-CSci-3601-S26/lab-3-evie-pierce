@@ -46,6 +46,28 @@
           </mat-form-field>
         </div>
 
+         <div class="flex-row gap-8 flex-wrap">
+
+          <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <input matInput data-test="todoLimitInput" type="number" min="1" max="999" placeholder="Limit todos" [(ngModel)]="todoLimit">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+
+        <mat-form-field class="input-field">
+            <mat-label>Order By</mat-label>
+            <mat-select [(ngModel)]="todoOrder" data-test="todoOrderSelect">
+              <mat-option>--</mat-option>
+              <mat-option value="category">Category</mat-option>
+              <mat-option value="status">Status</mat-option>
+              <mat-option value="owner">Owner</mat-option>
+              <mat-option value="body">Body</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+        </div>
+
         <div class="flex-row gap-8 flex-wrap">
           <label for="viewType">View type: </label>
           <mat-radio-group aria-label="View type" [(ngModel)]="viewType" data-test="viewTypeRadio">
