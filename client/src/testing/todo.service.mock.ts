@@ -41,7 +41,7 @@ export class MockTodoService implements Pick<TodoService, 'getTodos' | 'getTodoB
   // It's OK that the `_filters` argument isn't used here, so we'll disable
   // this warning for just his function.
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  getTodos(_filters: {status?: string; body?: string; }): Observable<Todo[]> {
+  getTodos(_filters: {status?: string; body?: string; limit?: number; orderBy?: string;}): Observable<Todo[]> {
     // Our goal here isn't to test (and thus rewrite) the service, so we'll
     // keep it simple and just return the test todos regardless of what
     // filters are passed in.
@@ -75,6 +75,8 @@ export class MockTodoService implements Pick<TodoService, 'getTodos' | 'getTodoB
   filterTodos(todos: Todo[], filters: {
     status?: string;
     body?: string;
+    limit?: number;
+    orderBy?: string;
   }): Todo[] {
     return []
   }
