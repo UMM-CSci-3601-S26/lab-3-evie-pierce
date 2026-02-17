@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-//import { map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Todo } from './todo';
 //import { Company } from '../company-list/company';
@@ -118,9 +118,14 @@ export class TodoService {
     return filteredTodos;
   }
 
-  // addUser(newUser: Partial<User>): Observable<string> {
-  //   // Send post request to add a new user with the user data as the body.
-  //   // `res.id` should be the MongoDB ID of the newly added `User`.
-  //   return this.httpClient.post<{id: string}>(this.userUrl, newUser).pipe(map(response => response.id));
-  // }
+  addTodo(newTodo: Partial<Todo>): Observable<string> {
+    // Send post request to add a new todo with the todo data as the body.
+    // `res.id` should be the MongoDB ID of the newly added `Todo`.
+    if (newTodo.status === "complete") {
+      newTodo.status = "true"
+    } else {
+      newTodo.status = "false"
+    }
+    return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(response => response.id));
+  }
 }
