@@ -9,6 +9,7 @@ import static com.mongodb.client.model.Filters.regex;
 //import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 //import java.util.Map;
 import java.util.Objects;
 //import java.util.regex.Pattern;
@@ -227,6 +228,39 @@ public class TodoController implements Controller {
    *
    * @param server The Javalin server instance
    */
+ public void addNewTodo(Context ctx) {
+    /*
+     * The follow chain of statements uses the Javalin validator system
+     * to verify that instance of `User` provided in this context is
+     * a "legal" user. It checks the following things (in order):
+     *    - The user has a value for the name (`usr.name != null`)
+     *    - The user name is not blank (`usr.name.length > 0`)
+     *    - The provided email is valid (matches EMAIL_REGEX)
+     *    - The provided age is > 0
+     *    - The provided age is < REASONABLE_AGE_LIMIT
+     *    - The provided role is valid (one of "admin", "editor", or "viewer")
+     *    - A non-blank company is provided
+     * If any of these checks fail, the Javalin system will throw a
+     * `BadRequestResponse` with an appropriate error message.
+     */
+  String context = ctx.body();
+  Todo newTodo = ctx.bodyValidator(Todo.class)
+    .check(todo -> todo.owner != null && todo.owner.length() > 0,
+      "Todo must have an owner; context was " + context)
+    .check(todo -> todo.category != null && todo.category.length() > 0,
+    "Todo must have a category; context was " + context)
+    .check(todo -> todo.body != null && todo.body.length() > 0,
+    "Todo must have a body; context was " + context)
+    .check(todo -> todo.status != null && todo.status.length() > 0,
+    "Todo must have a status; context was " + context)
+    .get();
+
+    todoCollection.insertOne(newTodo);
+    ctx.json(Map.of("id", newTodo._id));
+    ctx.status(HttpStatus.CREATED);
+  }
+
+
   @Override
   public void addRoutes(Javalin server) {
     // Get the specified todo
@@ -240,7 +274,7 @@ public class TodoController implements Controller {
 
     // Add new todo with the todo info being in the JSON body
     // of the HTTP request
-    //server.post(API_TODOS, this::addNewUser);
+    server.post(API_TODOS, this::addNewTodo);
 
     // Delete the specified todo
     //server.delete(API_TODO_BY_ID, this::deleteUser);

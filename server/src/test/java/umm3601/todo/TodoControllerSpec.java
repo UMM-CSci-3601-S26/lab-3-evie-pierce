@@ -1,13 +1,16 @@
 package umm3601.todo;
 
-//import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+//import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 //import static org.junit.jupiter.api.Assertions.assertNotEquals;
 //import static org.junit.jupiter.api.Assertions.assertNotNull;
 //import static org.junit.jupiter.api.Assertions.assertThrows;
 //import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 //import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,20 +50,17 @@ import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-//import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import io.javalin.validation.BodyValidator;
 //import io.javalin.http.NotFoundResponse;
-//import io.javalin.json.JavalinJackson;
-//import io.javalin.validation.BodyValidator;
-//import io.javalin.validation.ValidationError;
-//import io.javalin.validation.ValidationException;
-//import io.javalin.validation.Validator;
-//import umm3601.todo.TodoController;
-//import umm3601.user.UserController;
+import io.javalin.json.JavalinJackson;
+// import io.javalin.validation.ValidationError;
+// import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validation;
 import io.javalin.validation.Validator;
-//import umm3601.user.UserController;
+
+//import umm3601.todo.TodoController;
 
 /**
  * Tests the logic of the UserController
@@ -93,7 +93,7 @@ class TodoControllerSpec {
   private static MongoDatabase db;
 
   // Used to translate between JSON and POJOs.
-  //private static JavalinJackson javalinJackson = new JavalinJackson();
+  private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @Mock
   private Context ctx;
@@ -194,7 +194,7 @@ class TodoControllerSpec {
   void canGetAllTodos() throws IOException {
     // When something asks the (mocked) context for the queryParamMap,
     // it will return an empty map (since there are no query params in
-    // this case where we want all users).
+    // this case where we want all todos).
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
 
     // Now, go ahead and ask the todoController to getTodos
@@ -400,4 +400,43 @@ class TodoControllerSpec {
     // Only Alfred's Todo should fit all three filters.
      assertEquals("Do the first thing", todoArrayListCaptor.getValue().getFirst().body);
   }
+
+  @Test
+  void addTodo() throws IOException {
+    // Create a new todo to add
+    Todo newTodo = new Todo();
+    newTodo.owner = "Owner";
+    newTodo.category = "Testing";
+    newTodo.body = "This is a test!";
+    newTodo.status = "incomplete";
+
+    String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
+
+    when(ctx.bodyValidator(Todo.class))
+      .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class,
+                    () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+
+    // Our status should be 201, i.e., our new todo was successfully created.
+    verify(ctx).status(HttpStatus.CREATED);
+
+    // Verify that the todo was added to the database with the correct ID
+    Document addedTodo = db.getCollection("todos")
+        .find(eq("_id", new ObjectId(mapCaptor.getValue().get("id")))).first();
+
+    // Successfully adding the todo should return the newly generated, non-empty
+    // MongoDB ID for that todo.
+    assertNotEquals("", addedTodo.get("_id"));
+    // The new todo in the database (`addedTodo`) should have the same
+    // field values as the todo we asked it to add (`newTodo`).
+    assertEquals(newTodo.owner, addedTodo.get("owner"));
+    assertEquals(newTodo.category, addedTodo.get("category"));
+    assertEquals(newTodo.body, addedTodo.get("body"));
+    assertEquals(newTodo.status, addedTodo.get("status"));
+  }
+
+
+
 }
