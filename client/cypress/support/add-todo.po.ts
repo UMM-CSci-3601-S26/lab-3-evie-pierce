@@ -57,4 +57,3 @@ export class AddTodoPage {
     return this.addTodoButton().click();
   }
 }
-

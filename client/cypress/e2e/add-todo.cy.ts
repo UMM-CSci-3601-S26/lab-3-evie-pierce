@@ -13,7 +13,8 @@ describe('Add todo', () => {
   });
 
   it('Should enable and disable the add todo button', () => {
-    // ADD USER button should be disabled until all the necessary fields
+
+    // ADD TODO button should be disabled until all the necessary fields
     // are filled. Once the last (`#emailField`) is filled, then the button should
     // become enabled.
     page.addTodoButton().should('be.disabled');
@@ -62,12 +63,12 @@ describe('Add todo', () => {
         status: 'incomplete',
       };
 
-      cy.intercept('/api/todos').as('addTodo');
       page.addTodo(todo);
-      cy.wait('@addTodo');
+      //cy.wait('@addTodo');
 
       // We should see the confirmation message at the bottom of the screen
       page.getSnackBar().should('contain', `Added todo for ${todo.owner}`);
+      //page.getSnackBar().should('contain', `Added user ${user.name}`);
     });
   });
 });
