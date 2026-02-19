@@ -1,143 +1,88 @@
-// import { UserListPage } from '../support/user-list.po';
+import { TodoListPage } from '../support/todo-list.po';
 
-// const page = new UserListPage();
+const page = new TodoListPage();
 
-// describe('User list', () => {
+describe('Todo list', () => {
 
-//   before(() => {
-//     cy.task('seed:database');
-//   });
+  before(() => {
+    cy.task('seed:database');
+  });
 
-//   beforeEach(() => {
-//     page.navigateTo();
-//   });
+  beforeEach(() => {
+    page.navigateTo();
+  });
 
-//   it('Should have the correct title', () => {
-//     page.getUserTitle().should('have.text', 'Users');
-//   });
+  it('Should have the correct title', () => {
+    page.getTodoTitle().should('have.text', 'Todos');
+  });
 
-//   it('Should show 10 users in both card and list view', () => {
-//     page.getUserCards().should('have.length', 10);
-//     page.changeView('list');
-//     page.getUserListItems().should('have.length', 10);
-//   });
+  it('Should show 300 todos in both card and list view', () => {
+    page.getTodoCards().should('have.length', 300);
+    page.changeView('list');
+    page.getTodoListItems().should('have.length', 300);
+  });
 
-//   it('Should type something in the name filter and check that it returned correct elements', () => {
-//     // Filter for user 'Lynn Ferguson'
-//     cy.get('[data-test=userNameInput]').type('Lynn Ferguson');
+  it('Should type something in the owner and category filters and check that it returned correct elements', () => {
+    // Filter for todos by Fry
+    cy.get('[data-test=todoOwnerInput]').type('Fry');
+    cy.get('[data-test=todoCategoryInput]').type('homework');
 
-//     // All of the user cards should have the name we are filtering by
-//     page.getUserCards().each(e => {
-//       cy.wrap(e).find('.user-card-name').should('have.text', 'Lynn Ferguson');
-//     });
+    // All of the todo cards should have the name we are filtering by
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-title').should('have.text', 'Fry - homework');
+    });
+  });
 
-//     // (We check this two ways to show multiple ways to check this)
-//     page.getUserCards().find('.user-card-name').each(el =>
-//       expect(el.text()).to.equal('Lynn Ferguson')
-//     );
-//   });
+  it('Should type something in the body filter and check that it returned correct elements', () => {
+    // Filter for body "Lorem ipsum"
+    cy.get('[data-test=todoBodyInput]').type('Lorem ipsum');
+    //There are 2 cards that contain this body; should be above 1.
+    page.getTodoCards().should('have.lengthOf.above', 1);
+    //Cards don't actually display body.
+  });
 
-//   it('Should type something in the company filter and check that it returned correct elements', () => {
-//     // Filter for company 'OHMNET'
-//     cy.get('[data-test=userCompanyInput]').type('OHMNET');
+  it('Should change the view', () => {
+    // Choose the view type "List"
+    page.changeView('list');
 
-//     page.getUserCards().should('have.lengthOf.above', 0);
+    // We should not see any cards
+    // There should be list items
+    page.getTodoCards().should('not.exist');
+    page.getTodoListItems().should('exist');
 
-//     // All of the user cards should have the company we are filtering by
-//     page.getUserCards().find('.user-card-company').each(card => {
-//       cy.wrap(card).should('have.text', 'OHMNET');
-//     });
-//   });
+    // Choose the view type "Card"
+    page.changeView('card');
 
-//   it('Should type something partial in the company filter and check that it returned correct elements', () => {
-//     // Filter for companies that contain 'ti'
-//     cy.get('[data-test=userCompanyInput]').type('ti');
+    // There should be cards
+    // We should not see any list items
+    page.getTodoCards().should('exist');
+    page.getTodoListItems().should('not.exist');
+  });
 
-//     page.getUserCards().should('have.lengthOf', 2);
+  it('Should select a status, switch the view, and check that it returned correct elements', () => {
+    // Filter for role 'viewer');
+    page.selectStatus('incomplete');
 
-//     // Each user card's company name should include the text we are filtering by
-//     page.getUserCards().each(e => {
-//       cy.wrap(e).find('.user-card-company').should('include.text', 'TI');
-//     });
-//   });
+    // Choose the view type "List"
+    page.changeView('list');
 
-//   it('Should type something in the age filter and check that it returned correct elements', () => {
-//     // Filter for users of age '27'
-//     cy.get('[data-test=userAgeInput]').type('27');
+    // Some of the todos should be listed
+    page.getTodoListItems().should('have.lengthOf.above', 0);
 
-//     page.getUserCards().should('have.lengthOf', 3);
+    // All of the todo list items that show should have the status we are looking for
+    page.getTodoListItems().each(el => {
+      cy.wrap(el).find('.todo-list-status').should('contain', 'false');
+    });
+  });
 
-//     // Go through each of the cards that are being shown and get the names
-//     page.getUserCards().find('.user-card-name')
-//       // We should see these users whose age is 27
-//       .should('contain.text', 'Stokes Clayton')
-//       .should('contain.text', 'Bolton Monroe')
-//       .should('contain.text', 'Merrill Parker')
-//       // We shouldn't see these users
-//       .should('not.contain.text', 'Connie Stewart')
-//       .should('not.contain.text', 'Lynn Ferguson');
-//   });
+  it('Should click add todo and go to the right URL', () => {
+    // Click on the button for adding a new todo
+    page.addTodoButton().click();
 
-//   it('Should change the view', () => {
-//     // Choose the view type "List"
-//     page.changeView('list');
+    // The URL should end with '/todos/new'
+    cy.url().should(url => expect(url.endsWith('/todos/new')).to.be.true);
 
-//     // We should not see any cards
-//     // There should be list items
-//     page.getUserCards().should('not.exist');
-//     page.getUserListItems().should('exist');
-
-//     // Choose the view type "Card"
-//     page.changeView('card');
-
-//     // There should be cards
-//     // We should not see any list items
-//     page.getUserCards().should('exist');
-//     page.getUserListItems().should('not.exist');
-//   });
-
-//   it('Should select a role, switch the view, and check that it returned correct elements', () => {
-//     // Filter for role 'viewer');
-//     page.selectRole('viewer');
-
-//     // Choose the view type "List"
-//     page.changeView('list');
-
-//     // Some of the users should be listed
-//     page.getUserListItems().should('have.lengthOf.above', 0);
-
-//     // All of the user list items that show should have the role we are looking for
-//     page.getUserListItems().each(el => {
-//       cy.wrap(el).find('.user-list-role').should('contain', 'viewer');
-//     });
-//   });
-
-//   it('Should click view profile on a user and go to the right URL', () => {
-//     page.getUserCards().first().then((card) => {
-//       const firstUserName = card.find('.user-card-name').text();
-//       const firstUserCompany = card.find('.user-card-company').text();
-
-//       // When the view profile button on the first user card is clicked, the URL should have a valid mongo ID
-//       page.clickViewProfile(page.getUserCards().first());
-
-//       // The URL should be '/users/' followed by a mongo ID
-//       cy.url().should('match', /\/users\/[0-9a-fA-F]{24}$/);
-
-//       // On this profile page we were sent to, the name and company should be correct
-//       cy.get('.user-card-name').first().should('have.text', firstUserName);
-//       cy.get('.user-card-company').first().should('have.text', firstUserCompany);
-//     });
-//   });
-
-//   it('Should click add user and go to the right URL', () => {
-//     // Click on the button for adding a new user
-//     page.addUserButton().click();
-
-//     // The URL should end with '/users/new'
-//     cy.url().should(url => expect(url.endsWith('/users/new')).to.be.true);
-
-//     // On the page we were sent to, We should see the right title
-//     cy.get('.add-user-title').should('have.text', 'New User');
-//   });
-
-// });
+    // On the page we were sent to, We should see the right title
+    cy.get('.add-todo-title').should('have.text', 'New Todo');
+  });
+});

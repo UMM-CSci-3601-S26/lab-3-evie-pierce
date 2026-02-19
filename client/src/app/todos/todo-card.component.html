@@ -3,11 +3,11 @@
       <mat-card-content>
         <mat-list>
           <mat-list-item>
-            <p matListItemTitle>{{ todo().owner }} - {{ todo().category }}</p>
+            <p matListItemTitle class="todo-card-title">{{ todo().owner }} - {{ todo().category }}</p>
           </mat-list-item>
           <mat-divider [inset]=true></mat-divider>
          <mat-list-item>
-            <p matListItemTitle>Status: {{ todo().status }}</p>
+            <p matListItemTitle class="todo-card-status">Status: {{ todo().status }}</p>
           </mat-list-item>
           <!--
           <mat-divider [inset]=true></mat-divider>
